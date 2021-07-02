@@ -2,7 +2,6 @@ import datetime
 from flask import Flask, render_template, request, jsonify
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
-from nltk.util import pr
 import numpy as np
 import random
 import tflearn
@@ -11,14 +10,12 @@ import json
 import pickle
 
 stemmer = LancasterStemmer()
-seat_count = 50
+
 with open("intents.json") as file:
     data = json.load(file)
+	
 with open("data.pickle", "rb") as f:
     words, labels, training, output = pickle.load(f)
-
-# Function to process input
-
 
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
@@ -32,7 +29,6 @@ def bag_of_words(s, words):
                 bag[i] = 1
 
     return np.array(bag)
-
 
 ops.reset_default_graph()
 
@@ -48,15 +44,12 @@ model.load("model.tflearn")
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
 @app.route('/get')
 def get_bot_response():
-	global seat_count
 	message = request.args.get('msg')
 	if message:
 		message = message.lower()
@@ -73,6 +66,5 @@ def get_bot_response():
 		return str(response)
 	return "Missing Data!"
     
-
 if __name__ == "__main__":
     app.run()
